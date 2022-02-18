@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LetterPad" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="3714b76f-3972-44ef-a111-467d54eea594">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="cmp_logo_url" class="java.lang.String"/>
+	<parameter name="date" class="java.lang.String"/>
+	<parameter name="subject" class="java.lang.String"/>
+	<parameter name="content" class="java.lang.String"/>
+	<parameter name="toaddress" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement x="456" y="0" width="83" height="79" uuid="1a3a1d6b-329b-4c13-8744-c5b2b3e4baec"/>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="413" splitType="Stretch">
+			<textField>
+				<reportElement x="26" y="11" width="107" height="20" uuid="53ba7f3e-a74d-4e8e-a266-135168a1cc79"/>
+				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="152" width="452" height="20" uuid="aec1b764-645a-454d-aa63-54c15b09389b"/>
+				<textFieldExpression><![CDATA[$P{subject}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="26" y="49" width="459" height="87" uuid="4ee69e1c-5e93-4e8f-b22e-a0d051a1ea63"/>
+				<textFieldExpression><![CDATA[$P{toaddress}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="31" y="185" width="452" height="112" uuid="9327f659-652b-42da-8870-f9c059b89308"/>
+				<textFieldExpression><![CDATA[$P{content}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="35" y="309" width="100" height="20" uuid="ab489f92-6eb8-4610-a8a9-d64ac33946ae"/>
+				<text><![CDATA[Thanking You]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="35" y="362" width="100" height="47" uuid="c4231d8b-589e-4d59-a6e1-0b0279defd4e"/>
+				<text><![CDATA[Shanmugam Muthu
+Director
+2CQR Automation Pvt Ltd
+
+]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<pageFooter>
+		<band height="194" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement x="1" y="51" width="148" height="141" uuid="6c9b9542-c895-4551-8edd-2d00368f28f8"/>
+			</image>
+			<line>
+				<reportElement x="-21" y="127" width="595" height="1" forecolor="#CC0000" uuid="d027eab0-10cd-43f1-b0b2-d405ed51b8c0"/>
+			</line>
+			<staticText>
+				<reportElement x="70" y="152" width="131" height="20" uuid="7e0a7fbc-a474-4f7e-827d-2c9ee9ae4d8d"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[2CQR Automation Pvt Ltd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="201" y="151" width="177" height="41" uuid="4c7b1205-2228-4bc3-8906-3676d06af8c0"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+				</textElement>
+				<text><![CDATA[172/1, Sridevikuppam main road,
+Valasaravakkam, Chennai - 600087
+GST:33AAACZ6893KIZQ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="378" y="151" width="177" height="40" uuid="86ecfef6-2a38-415c-9cbe-478024673a2c"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+				</textElement>
+				<text><![CDATA[www.2cqr.in\www.rfidjewellery.com
+9360 002 002\9363 002 002
+2secure@2cqr.in]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+</jasperReport>
