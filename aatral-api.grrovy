@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+	def v = version()
+	if(v){
+		echo "Building version : ${v}"
+	}
     stages {
         stage('Build') {
             steps {
