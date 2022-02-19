@@ -109,8 +109,8 @@ public class AccountingServiceImpl implements AccountingService {
 	}
 
 	@Override
-	public Map<String, Object> getAllLetterPad(LetterpadRequest req) {
-		return acntDAO.getAllLetterPad(req);
+	public Map<String, Object> getAllLetterPad() {
+		return acntDAO.getAllLetterPad();
 	}
 
 }

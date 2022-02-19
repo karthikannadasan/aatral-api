@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -150,13 +151,23 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 		Map<String, Object> resp = new HashMap<>();
 
 		try {
-
+			Deal deal = dealRepo.findById(dealInvReq.getDealInvoice().getDealId());
+			List<DealInvoice> _deal_invoices = invRepo.findByDealId(dealInvReq.getDealInvoice().getDealId());
+			System.out.println(_deal_invoices);
+			Double totalAmount = _deal_invoices.stream()
+					.filter(inv -> inv.getId() != dealInvReq.getDealInvoice().getId())
+					.mapToDouble(DealInvoice::getGrandTotal).sum();
+			totalAmount = totalAmount + dealInvReq.getDealInvoice().getGrandTotal();
 			DealInvoice ditemp = invRepo.findByInvoiceNo(dealInvReq.getDealInvoice().getInvoiceNo());
+
 			if (dealInvReq.getDealInvoice().getId() == 0 && ditemp != null) {
 				resp.putAll(Util.invalidMessage("Invoice No Already Exist"));
 			} else if (ditemp != null && dealInvReq.getDealInvoice().getId() > 0 && ditemp != null
 					&& dealInvReq.getDealInvoice().getId() != ditemp.getId()) {
 				resp.putAll(Util.invalidMessage("Invoice No Already Exist with another Deal"));
+			} else if (totalAmount > deal.getGrandTotal()) {
+				System.out.println(totalAmount + " :: " + deal.getGrandTotal());
+				resp.putAll(Util.invalidMessage("Invoice amount exceeds deal amount."));
 			} else {
 
 				boolean newInvoice = dealInvReq.getDealInvoice().getId() > 0 ? false : true;
@@ -328,7 +339,9 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 				resp.putAll(Util.SuccessResponse());
 			}
 
-		} catch (Exception Ex) {
+		} catch (
+
+		Exception Ex) {
 			Ex.printStackTrace();
 			resp.putAll(Util.FailedResponse(Ex.getMessage()));
 		}
@@ -336,6 +349,27 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 		resp.put("DealInvoiceProducts", dealInvReq.getDealInvoiceProducts());
 		resp.put("DealInvoiceContacts", dealInvReq.getInstituteContacts());
 
+		return resp;
+	}
+
+	@Transactional
+	@Modifying
+	@Override
+	public Map<String, Object> deleteDealInvoice(DealInvoice invoice) {
+		Map<String, Object> resp = new HashMap<>();
+		try {
+
+			invProdRepo.deleteByInvoiceId(invoice.getId());
+
+			invContactsRepo.deleteByInvoiceId(invoice.getId());
+
+			invRepo.delete(invoice);
+
+			resp.putAll(Util.SuccessResponse());
+		} catch (Exception e) {
+			resp.putAll(Util.FailedResponse(e.getMessage()));
+			e.printStackTrace();
+		}
 		return resp;
 	}
 

@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.autolib.helpdesk.Sales.model.DealPayments;
 import com.autolib.helpdesk.Sales.model.DealRequest;
+import com.autolib.helpdesk.Sales.model.Invoice.DealInvoice;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceReminderRequest;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceRequest;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceSearchRequest;
@@ -15,6 +16,8 @@ import com.autolib.helpdesk.Sales.model.Invoice.InvoiceEmailReminderSettings;
 public interface InvoiceService {
 
 	Map<String, Object> saveDealInvoice(DealInvoiceRequest dealInvReq);
+
+	Map<String, Object> deleteDealInvoice(DealInvoice dealInv);
 
 	Map<String, Object> getDealInvoice(int invoiceId);
 

@@ -66,6 +66,12 @@ public class RoleMaster {
 	private boolean ticketsAdmin = false;
 
 	@Column
+	private String returnables = "No Access";
+
+	@Column(name = "returnables_admin", nullable = false)
+	private boolean returnablesAdmin = false;
+
+	@Column
 	private String reports;
 
 	@Column
@@ -207,6 +213,22 @@ public class RoleMaster {
 		this.ticketsAdmin = ticketsAdmin;
 	}
 
+	public String getReturnables() {
+		return returnables;
+	}
+
+	public void setReturnables(String returnables) {
+		this.returnables = returnables;
+	}
+
+	public boolean isReturnablesAdmin() {
+		return returnablesAdmin;
+	}
+
+	public void setReturnablesAdmin(boolean returnablesAdmin) {
+		this.returnablesAdmin = returnablesAdmin;
+	}
+
 	public String getReports() {
 		return reports;
 	}
@@ -258,10 +280,13 @@ public class RoleMaster {
 	@Override
 	public String toString() {
 		return "RoleMaster [id=" + id + ", name=" + name + ", institute=" + institute + ", product=" + product
-				+ ", supplier=" + supplier + ", sales=" + sales + ", purchaseInput=" + purchaseInput + ", accounting="
-				+ accounting + ", hr=" + hr + ", admin=" + admin + ", tickets=" + tickets + ", reports=" + reports
-				+ ", defaultDashboard=" + defaultDashboard + ", createdBy=" + createdBy + ", modifiedBy=" + modifiedBy
-				+ ", createddatetime=" + createddatetime + ", lastupdatedatetime=" + lastupdatedatetime + "]";
+				+ ", supplier=" + supplier + ", leadManagement=" + leadManagement + ", leadManagementAdmin="
+				+ leadManagementAdmin + ", sales=" + sales + ", salesAdmin=" + salesAdmin + ", purchaseInput="
+				+ purchaseInput + ", accounting=" + accounting + ", hr=" + hr + ", admin=" + admin + ", tickets="
+				+ tickets + ", ticketsAdmin=" + ticketsAdmin + ", returnables=" + returnables + ", returnablesAdmin="
+				+ returnablesAdmin + ", reports=" + reports + ", defaultDashboard=" + defaultDashboard + ", createdBy="
+				+ createdBy + ", modifiedBy=" + modifiedBy + ", createddatetime=" + createddatetime
+				+ ", lastupdatedatetime=" + lastupdatedatetime + "]";
 	}
 
 }

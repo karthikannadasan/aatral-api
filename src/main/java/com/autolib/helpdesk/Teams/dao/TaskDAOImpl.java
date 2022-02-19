@@ -944,7 +944,7 @@ public class TaskDAOImpl implements TaskDAO {
 		try {
 
 			TeamPushNotifySetting pushNotifySetting = pushNotifyRepo
-					.findByTeamIdAndAction(request.getTask().getTeamId(), "Task Created");
+					.findByTeamIdAndAction(request.getTask().getTeamId(), "Task Updated");
 
 			Teams team = teamRepo.findById(request.getTask().getTeamId());
 
@@ -1008,7 +1008,7 @@ public class TaskDAOImpl implements TaskDAO {
 
 			if (emailIds.size() > 0) {
 
-				// PushNotification.sendUpdateTaskPushNotification(request, emailIds);
+				pushNotify.sendUpdateTaskPushNotification(request, emailIds);
 
 			}
 

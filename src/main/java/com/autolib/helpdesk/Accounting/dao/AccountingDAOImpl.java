@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,13 +34,13 @@ import com.autolib.helpdesk.Accounting.repository.LetterpadRepository;
 import com.autolib.helpdesk.Agents.entity.Agent;
 import com.autolib.helpdesk.Agents.entity.AgentLedger;
 import com.autolib.helpdesk.Agents.entity.InfoDetails;
+import com.autolib.helpdesk.Agents.entity.PushNotification;
 import com.autolib.helpdesk.Agents.entity.Vendor;
 import com.autolib.helpdesk.Agents.repository.AgentLedgerRepository;
 import com.autolib.helpdesk.Agents.repository.AgentRepository;
 import com.autolib.helpdesk.Agents.repository.InfoDetailsRepository;
 import com.autolib.helpdesk.Agents.repository.VendorRepository;
 import com.autolib.helpdesk.Institutes.model.Institute;
-import com.autolib.helpdesk.Institutes.repository.InstituteRepository;
 import com.autolib.helpdesk.common.Util;
 
 import net.sf.jasperreports.engine.JasperCompileManager;
@@ -68,6 +69,9 @@ public class AccountingDAOImpl implements AccountingDAO {
 	AgentLedgerRepository agentLedgerRepo;
 
 	@Autowired
+	private PushNotification pushNotify;
+
+	@Autowired
 	private JdbcTemplate jdbcTemp;
 
 	@Autowired
@@ -75,17 +79,13 @@ public class AccountingDAOImpl implements AccountingDAO {
 
 	@Value("${al.ticket.content-path}")
 	private String contentPath;
-	
+
 	@Autowired
 	LetterpadRepository letterpadRepo;
-	
-	@Autowired	
-	InfoDetailsRepository infoDetailRepo;
-	
-	@Autowired
-	InstituteRepository instRepo;
-	
 
+	@Autowired
+
+	InfoDetailsRepository infoDetailRepo;
 
 	@Override
 	public Map<String, Object> getAccountingDashboardData() {
@@ -334,7 +334,16 @@ public class AccountingDAOImpl implements AccountingDAO {
 		Map<String, Object> resp = new HashMap<>();
 		try {
 
+			boolean newLegder = ledger.getId() == 0;
+
 			ledger = agentLedgerRepo.save(ledger);
+
+			if (newLegder) {
+				if (ledger.getCredit() > 0)
+					pushNotify.sendAgentLedgerCreditNotify(ledger);
+				else if (ledger.getDebit() > 0)
+					pushNotify.sendAgentLedgerDebitNotify(ledger);
+			}
 
 			resp.putAll(Util.SuccessResponse());
 		} catch (Exception e) {
@@ -496,7 +505,7 @@ public class AccountingDAOImpl implements AccountingDAO {
 
 			if (!req.getRefNo().isEmpty() && req.getRefNo() != null) {
 				filterQuery = filterQuery + " and bs.refNo like '%" + req.getRefNo() + "%'";
- 		}
+			}
 
 			if (!req.getDescription().isEmpty() && req.getDescription() != null) {
 				filterQuery = filterQuery + " and bs.description like '%" + req.getDescription() + "%'";
@@ -509,8 +518,8 @@ public class AccountingDAOImpl implements AccountingDAO {
 
 			System.out.println(":::FilterQuery::" + filterQuery);
 
-			//Query query = em.createQuery("Select bs from AccountStatement bs where 2>1" + filterQuery);
-			//resp.put("AccountStatementData", query.getResultList());
+			Query query = em.createQuery("Select bs from AccountStatement bs where 2>1" + filterQuery);
+			resp.put("AccountStatementData", query.getResultList());
 
 			resp.putAll(Util.SuccessResponse());
 		} catch (Exception e) {
@@ -523,30 +532,27 @@ public class AccountingDAOImpl implements AccountingDAO {
 
 	@Override
 	public Map<String, Object> saveLetterPad(LetterPad letterpad) {
-		Map<String ,Object> respMap = new HashMap<>();
-		
+		Map<String, Object> respMap = new HashMap<>();
+
 		try {
-			
-//			if (letterpad.getSubject() == null || letterpad.getSubject().isEmpty())
-//				respMap.putAll(Util.invalidMessage("Subject Cannot be empty..!!"));
-//			if (letterpad.getContent() == null || letterpad.getContent().isEmpty())
-//				respMap.putAll(Util.invalidMessage("Content Cannot be empty..!!"));
-//			if (letterpad.getRegardText() == null || letterpad.getRegardText().isEmpty())
-//				respMap.putAll(Util.invalidMessage("Regards Cannot be empty..!!"));
-//			if (letterpad.getToAddress() == null || letterpad.getToAddress().isEmpty())
-//				respMap.putAll(Util.invalidMessage("Address Cannot be empty..!!"));
-//			
-//			else {
-			
-			    //letterpad.getInstitute().setInstituteId("5555709");
+
+			if (letterpad.getSubject() == null || letterpad.getSubject().isEmpty())
+				respMap.putAll(Util.invalidMessage("Subject Cannot be empty..!!"));
+			if (letterpad.getContent() == null || letterpad.getContent().isEmpty())
+				respMap.putAll(Util.invalidMessage("Content Cannot be empty..!!"));
+			if (letterpad.getRegardText() == null || letterpad.getRegardText().isEmpty())
+				respMap.putAll(Util.invalidMessage("Regards Cannot be empty..!!"));
+			if (letterpad.getToAddress() == null || letterpad.getToAddress().isEmpty())
+				respMap.putAll(Util.invalidMessage("Address Cannot be empty..!!"));
+
+			else {
 
 				letterpad = letterpadRepo.save(letterpad);
 				respMap.put("letterpad", letterpad);
-				respMap.putAll(Util.SuccessResponse());			
-		//	}
-			
-		}catch(Exception ex)
-		{
+				respMap.putAll(Util.SuccessResponse());
+			}
+
+		} catch (Exception ex) {
 			respMap.putAll(Util.FailedResponse(ex.getMessage()));
 			ex.printStackTrace();
 		}
@@ -555,21 +561,11 @@ public class AccountingDAOImpl implements AccountingDAO {
 
 	@Override
 	public Map<String, Object> getLetterPad(int id) {
-		Map<String,Object> respMap = new HashMap<>();
-		LetterPad letterpad = new LetterPad();
-		Institute inst = new Institute();
+		Map<String, Object> respMap = new HashMap<>();
 		try {
-			
-			letterpad = letterpadRepo.findById(id);
-			inst = instRepo.findByInstituteId(letterpad.getInstitute().getInstituteId());
-			
-			respMap.put("letterpad", letterpad);
-			respMap.put("institute", inst);
-			respMap.putAll(Util.SuccessResponse());	
-			
-		}catch(Exception ex)
-		{
-			ex.printStackTrace();
+
+		} catch (Exception ex) {
+
 		}
 		return respMap;
 	}
@@ -592,101 +588,35 @@ public class AccountingDAOImpl implements AccountingDAO {
 			System.out.println("Email Id:::::::" + letterpadReq.getSignatureBy());
 
 			InfoDetails info = infoDetailRepo.findById(1);
-			
 			lp = letterpadRepo.findById(letterpadReq.getId());
 			letterpadReq.setLetterpad(letterpadRepo.findById(letterpadReq.getId()));
 			Agent agent = agentRepo.findByEmailId(letterpadReq.getSignatureBy());
-			Institute inst = instRepo.findByInstituteId(lp.getInstitute().getInstituteId());
 
 			System.out.println(info.toString());
-			
-			System.out.println("LetterPad Data::::::::"+letterpadReq.getLetterpad());
-			
-			
-			parameters.put("cmp_logo_footer", info.getLogoAsFile());
-			parameters.put("cmp_logo_url", letterpadReq.isAddLogo() ? info.getLogoAsFile() : null);
-			parameters.put("roundseal", letterpadReq.isAddRoundSeal() ? info.getRoundSealAsFile() : null);
-			parameters.put("fullseal", letterpadReq.isAddFullSeal() ? info.getFullSealAsFile() : null);
-			parameters.put("signature",letterpadReq.isAddSign() ? agent.getSignatureAsFile() : null);
-			
-			//parameters.put("header_label", letterpadReq.isAddRoundSeal() ? info.getRoundSealAsFile() : null);
-			parameters.put("designation", letterpadReq.getDesignation());
 
 			parameters.put("cmp_name", info.getCmpName());
-			
-			String website_template="";
-			
-			if(!info.getCmpWebsiteUrl().equals("") && !info.getCmpWebsiteUrl().equals(null)  )
-			{
-				website_template=website_template+info.getCmpWebsiteUrl()+"<br>";
-			}
-			if(!info.getCmpEmail().equals("") && !info.getCmpEmail().equals(null)  )
-			{
-				website_template=website_template+info.getCmpEmail()+"<br>";
-			}
-			if(!info.getCmpPhone().equals("") && !info.getCmpPhone().equals(null)  )
-			{
-				website_template=website_template+info.getCmpPhone()+"/";
-			}
-			if(!info.getCmpLandLine().equals("") && !info.getCmpLandLine().equals(null)  )
-			{
-				website_template=website_template+info.getCmpLandLine()+"";
-			}
-			
-			
-			parameters.put("cmp_website", website_template);
-			parameters.put("cmp_address", info.getCompanyAddress());
-			
+			parameters.put("cmp_address", info.getCompanyAddressHTML1());
+			// parameters.put("cmp_logo_url", info.getLogoAsFile());
+			parameters.put("cmp_logo_url", letterpadReq.isCmpLogo() ? info.getLogoAsFile() : null);
+			parameters.put("cmp_website", "");
 
-	        parameters.put("date", "Date : "
-			+ Util.sdfFormatter(letterpadReq.getLetterpad().getLetterPadDate(), "dd-MM-yyyy"));
-			
-	        
-	        String toaddress_label = "";
-	        if(!letterpadReq.getLetterpad().getBillingTo().equals("")&&!letterpadReq.getLetterpad().getBillingTo().equals(null)) {
+			parameters.put("header_label", letterpadReq.isAddRoundSeal() ? info.getRoundSealAsFile() : null);
+			parameters.put("roundseal", letterpadReq.isAddRoundSeal() ? info.getRoundSealAsFile() : null);
+			parameters.put("fullseal", letterpadReq.isAddFullSeal() ? info.getFullSealAsFile() : null);
+			parameters.put("signature", letterpadReq.isAddSign() ? agent.getSignatureAsFile() : null);
+			parameters.put("for_label", "For " + info.getCmpName());
+			parameters.put("designation", letterpadReq.getDesignation());
 
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingTo()+"<br>";
-	        }
-	        if(!inst.getInstituteName().equals("")&&!inst.getInstituteName().equals(null)) {
+			parameters.put("date",
+					"Date : " + Util.sdfFormatter(letterpadReq.getLetterpad().getLetterPadDate(), "dd-MM-yyyy"));
 
-	        	toaddress_label = toaddress_label+inst.getInstituteName()+"<br>";
-	        }
-	        if(!letterpadReq.getLetterpad().getBillingStreet1().equals("")&& !letterpadReq.getLetterpad().getBillingStreet1().equals(null)) {
+			parameters.put("content", letterpadReq.getLetterpad().getContent().replaceAll("\n", "<br>"));
+			parameters.put("toaddress", letterpadReq.getLetterpad().getToAddress().replaceAll("\n", "<br>"));
+			parameters.put("subject", "Sub: " + letterpadReq.getLetterpad().getSubject());
 
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingStreet1()+"<br>";
-	        }
-	        if(!letterpadReq.getLetterpad().getBillingStreet2().equals("")&&!letterpadReq.getLetterpad().getBillingStreet2().equals(null)) {
-
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingStreet2()+"<br>";
-	        }
-	        if(!letterpadReq.getLetterpad().getBillingCity().equals("")&&!letterpadReq.getLetterpad().getBillingCity().equals(null)) {
-
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingCity()+"<br>";
-	        }
-	        if(!letterpadReq.getLetterpad().getBillingState().equals("")&&!letterpadReq.getLetterpad().getBillingState().equals(null)) {
-
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingState()+"<br>";
-	        }
-	        if(!letterpadReq.getLetterpad().getBillingCountry().equals("")&&!letterpadReq.getLetterpad().getBillingCountry().equals(null)) {
-
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingCountry()+"<br>";
-	        }
-	        
-	        if(!letterpadReq.getLetterpad().getBillingZIPCode().equals("")&&!letterpadReq.getLetterpad().getBillingZIPCode().equals(null)) {
-
-	        	toaddress_label = toaddress_label+letterpadReq.getLetterpad().getBillingZIPCode();
-	        }
-
-	        parameters.put("toaddress", toaddress_label);
-	        parameters.put("subject", "Sub: " + letterpadReq.getLetterpad().getSubject());
-			parameters.put("content", letterpadReq.getLetterpad().getContent().replaceAll("\n", "<br>"));			
-		
-			
-			
 			parameters.put("thanks", "Thanking You");
-			parameters.put("header_label", letterpadReq.isAddLetterHead()? letterpadReq.getHeader() : "LETTERPAD");
-			parameters.put("regards",agent.getFirstName()+" "+ agent.getLastName() + "<br>" +agent.getDesignation()+"<br>"+info.getCmpName());
-		
+			parameters.put("regards", agent.getFirstName() + " " + agent.getLastName() + "<br>" + agent.getDesignation()
+					+ "<br>" + info.getCmpName());
 
 			System.out.println(parameters.toString());
 
@@ -730,79 +660,40 @@ public class AccountingDAOImpl implements AccountingDAO {
 
 	@Override
 	public Map<String, Object> deleteLetterPad(LetterPad letterpad) {
-		
-		Map<String ,Object> respMap = new HashMap<>();
+
+		Map<String, Object> respMap = new HashMap<>();
 		try {
-			
+
 			letterpadRepo.delete(letterpad);
 			respMap.putAll(Util.SuccessResponse());
 		} catch (Exception e) {
 			respMap.putAll(Util.FailedResponse(e.getMessage()));
 			e.printStackTrace();
 		}
-		
+
 		return respMap;
 	}
 
-
-	public Map<String, Object> getAllLetterPad(LetterpadRequest req) {
-		Map<String,Object> respMap = new HashMap<>();
+	@Override
+	public Map<String, Object> getAllLetterPad() {
+		Map<String, Object> respMap = new HashMap<>();
 		List<LetterPad> list = new ArrayList<>();
-		List<Map<String, Object>> categoryList = new ArrayList<>();
 		try {
-			
-			
-			String filterQuery = "";
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
+			list = letterpadRepo.findAll();
 
-			if (req.getInstitutes().size() > 0 && req.getInstitutes() != null) {
-				
-				String instituteIds = "'0'";
-				for (Institute inst : req.getInstitutes()) {
-					instituteIds = instituteIds + ",'" + inst.getInstituteId() + "'";
-				}
-				filterQuery = filterQuery + " and i.institute_id in (" + instituteIds + ") ";
-			}
-			
-			if (req.getId()!=0) {
-				filterQuery = filterQuery + " and lp.id ='"+req.getId()+"'";
-			}
-			
-			if (!req.getSubject().isEmpty() && req.getSubject() != null) {
-				filterQuery = filterQuery + " and lp.subject like '"+req.getSubject()+"%'";
+			if (!list.equals("") || !list.equals(null)) {
+				respMap.putAll(Util.SuccessResponse());
+				respMap.put("AllLetterpads", list);
+			} else {
+				respMap.putAll(Util.FailedResponse());
 			}
 
-			if (req.getLatterpadDateFrom() != null && req.getLatterpadDateTo() != null) {
-				filterQuery = filterQuery + " and lp.date between '" + sdf.format(req.getLatterpadDateFrom())
-						+ "' and '" + sdf.format(req.getLatterpadDateTo()) + "'";
-			}
-
-			System.out.println(":::FilterQuery::" + filterQuery);
-			
-			
-			categoryList = jdbcTemp.queryForList("SELECT lp.id AS id,lp.subject AS SUBJECT,lp.content AS content,lp.date AS DATE,lp.file_name AS file_name,i.institute_id AS institute_id,i.institute_name AS institute_name FROM letterpad lp JOIN institutes i ON(lp.institute_id = i.institute_id) WHERE 2>1 "+filterQuery);
-
-//			Query query = em.createQuery("Select lp from letterpad lp where 2>1" + filterQuery);
-    		respMap.put("letterpadData", categoryList);
-			respMap.putAll(Util.SuccessResponse());
-			
-			
-			
-			
-     	//	list = letterpadRepo.findAll();
-     		
-     		
-			
-		}
-		catch(Exception ex)
-		{
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			respMap.putAll(Util.FailedResponse(ex.getMessage()));
 		}
 		return respMap;
 	}
-	
-	
 
 }

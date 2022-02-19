@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Quote_Template_1_IGST" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="1ba43834-a9df-472b-86ae-048084f46fcd">
 	<property name="ireport.zoom" value="2.257895720215112"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="908"/>
+	<property name="ireport.x" value="258"/>
+	<property name="ireport.y" value="378"/>
 	<parameter name="cmp_name" class="java.lang.String"/>
 	<parameter name="cmp_address" class="java.lang.String"/>
 	<parameter name="billing_to" class="java.lang.String"/>

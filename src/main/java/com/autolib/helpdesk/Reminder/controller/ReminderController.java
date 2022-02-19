@@ -125,7 +125,7 @@ public class ReminderController {
 	public ResponseEntity<?> searchReminders(@RequestHeader(value = "Authorization") String token,
 			@RequestBody ReminderSearchRequest request) {
 
-		logger.info("searchLeads starts:::" + request);
+		logger.info("searchReminders starts:::" + request);
 		jwtUtil.isValidToken(token);
 		Map<String, Object> resp = new HashMap<>();
 
@@ -138,7 +138,7 @@ public class ReminderController {
 			e.printStackTrace();
 		}
 
-		logger.info("searchLeads ends:::");
+		logger.info("searchReminders ends:::");
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 

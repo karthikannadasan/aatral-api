@@ -1,76 +1,12 @@
 package com.autolib.helpdesk.Accounting.model;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.Transient;
-
-import com.autolib.helpdesk.Institutes.model.Institute;
+import com.autolib.helpdesk.Tickets.model.CallReport;
 
 public class LetterpadRequest {
-
+	
 	private int id;
-
-	private List<Institute> institutes ;
-
-	private String subject = "";
-
-	private Date latterpadDateFrom = null;
-
-	private Date latterpadDateTo = null;
-
-	private LetterPad letterpad;
-
-	private String templateName = "";
-
-	private String signatureBy = "";
-
-	private String designation = "";
-
-	private String fileAsBase64 = "";
-
-	private String filename = "";
-
-	private String receiptContent = "";
-
-	private boolean addRoundSeal = false;
-
-	private boolean addFullSeal = false;
-
-	private boolean addLetterHead = false;
-
-	private boolean addLogo = false;
-
-	private boolean addSign = false;
-
-	private String header = "";
-
-
-	public String getHeader() {
-		return header;
-	}
-
-	public void setHeader(String header) {
-		this.header = "Letterpad";
-	}
-
-	public List<Institute> getInstitutes() {
-		return institutes;
-	}
-
-	public void setInstitutes(List<Institute> institutes) {
-		this.institutes = institutes;
-	}
-
-	public String getSubject() {
-		return subject;
-	}
-
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
-
-	public int getId() {
+	
+    public int getId() {
 		return id;
 	}
 
@@ -158,50 +94,56 @@ public class LetterpadRequest {
 		this.receiptContent = receiptContent;
 	}
 
+	private LetterPad letterpad;
+	
+	private String templateName = "";
+	
+	
+	private boolean addRoundSeal = false;
+	 
+	private boolean addFullSeal = false;
+	 
+	private boolean addSign = false;
+	
+	private String signatureBy = "";
+	
+	private String designation = "";
+	
+	private String fileAsBase64 = "";
+	
+	private String filename = "";
+	
+	private String receiptContent = "";
 
-	public boolean isAddLetterHead() {
-		return addLetterHead;
+	private boolean headerLabel = false;
+	
+	public boolean isHeaderLabel() {
+		return headerLabel;
 	}
 
-	public void setAddLetterHead(boolean addLetterHead) {
-		this.addLetterHead = addLetterHead;
+	public void setHeaderLabel(boolean headerLabel) {
+		this.headerLabel = headerLabel;
 	}
 
-	public boolean isAddLogo() {
-		return addLogo;
+	public boolean isCmpLogo() {
+		return cmpLogo;
 	}
 
-	public void setAddLogo(boolean addLogo) {
-		this.addLogo = addLogo;
+	public void setCmpLogo(boolean cmpLogo) {
+		this.cmpLogo = cmpLogo;
 	}
 
-	public Date getLatterpadDateFrom() {
-		return latterpadDateFrom;
-	}
-
-	public void setLatterpadDateFrom(Date latterpadDateFrom) {
-		this.latterpadDateFrom = latterpadDateFrom;
-	}
-
-	public Date getLatterpadDateTo() {
-		return latterpadDateTo;
-	}
-
-	public void setLatterpadDateTo(Date latterpadDateTo) {
-		this.latterpadDateTo = latterpadDateTo;
-	}
+	private boolean cmpLogo = false;
 
 	@Override
 	public String toString() {
-		return "LetterpadRequest [id=" + id + ", institutes=" + institutes + ", subject=" + subject
-				+ ", latterpadDateFrom=" + latterpadDateFrom + ", latterpadDateTo=" + latterpadDateTo + ", letterpad="
-				+ letterpad + ", templateName=" + templateName + ", signatureBy=" + signatureBy + ", designation="
-				+ designation + ", fileAsBase64=" + fileAsBase64 + ", filename=" + filename + ", receiptContent="
-				+ receiptContent + ", addRoundSeal=" + addRoundSeal + ", addFullSeal=" + addFullSeal
-				+ ", addLetterHead=" + addLetterHead + ", addLogo=" + addLogo + ", addSign=" + addSign + ", header="
-				+ header + "]";
+		return "LetterpadRequest [id=" + id + ", letterpad=" + letterpad + ", templateName=" + templateName
+				+ ", addRoundSeal=" + addRoundSeal + ", addFullSeal=" + addFullSeal + ", addSign=" + addSign
+				+ ", signatureBy=" + signatureBy + ", designation=" + designation + ", fileAsBase64=" + fileAsBase64
+				+ ", filename=" + filename + ", receiptContent=" + receiptContent + ", headerLabel=" + headerLabel
+				+ ", cmpLogo=" + cmpLogo + "]";
 	}
-
+	
 	
 
 }

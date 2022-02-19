@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LetterPad" pageWidth="555" pageHeight="650" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="1ba43834-a9df-472b-86ae-048084f46fcd">
-	<property name="ireport.zoom" value="1.274523270841434"/>
+	<property name="ireport.zoom" value="1.4019755979255775"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="37"/>
 	<parameter name="cmp_name" class="java.lang.String"/>
 	<parameter name="cmp_address" class="java.lang.String"/>
 	<parameter name="cmp_logo_url" class="java.lang.Object"/>
@@ -21,26 +21,25 @@
 	<parameter name="thanks" class="java.lang.String"/>
 	<parameter name="header_label" class="java.lang.String"/>
 	<parameter name="cmp_website" class="java.lang.String"/>
-	<parameter name="cmp_logo_footer" class="java.lang.Object"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
 	<title>
-		<band height="489" splitType="Stretch">
+		<band height="423" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement x="73" y="125" width="453" height="65" isPrintWhenDetailOverflows="true" uuid="b610a5cc-3aa9-46c4-998b-a49aa9eb3973"/>
 				<textElement verticalAlignment="Top" markup="html">
 					<font fontName="Verdana" size="10"/>
-					<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+					<paragraph lineSpacing="Fixed"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{toaddress}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="FillFrame">
-				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="440" y="4" width="99" height="69" uuid="61a92946-4ff4-4117-b53d-7fd7ec193aa3"/>
+				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="445" y="4" width="99" height="87" uuid="61a92946-4ff4-4117-b53d-7fd7ec193aa3"/>
 				<imageExpression><![CDATA[$P{cmp_logo_url}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="73" y="237" width="454" height="20" uuid="78cfac94-035f-46c2-a159-d8eaeffd2f3e"/>
+				<reportElement x="73" y="202" width="454" height="20" uuid="78cfac94-035f-46c2-a159-d8eaeffd2f3e"/>
 				<textElement markup="html">
 					<font fontName="Verdana" size="10"/>
 					<paragraph lineSpacing="Fixed"/>
@@ -48,7 +47,7 @@
 				<textFieldExpression><![CDATA[$P{subject}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="73" y="274" width="454" height="89" uuid="3fdce11d-49aa-4bb9-9576-492c111be627"/>
+				<reportElement x="73" y="231" width="448" height="93" uuid="3fdce11d-49aa-4bb9-9576-492c111be627"/>
 				<textElement markup="html">
 					<font fontName="Verdana" size="10"/>
 					<paragraph lineSpacing="Double"/>
@@ -56,12 +55,12 @@
 				<textFieldExpression><![CDATA[$P{content}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="342" y="99" width="170" height="20" uuid="92a9971b-b510-47ab-a28b-93c5764e9fc3"/>
+				<reportElement x="374" y="97" width="170" height="20" uuid="92a9971b-b510-47ab-a28b-93c5764e9fc3"/>
 				<textElement textAlignment="Right" markup="html"/>
 				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="73" y="442" width="253" height="38" uuid="3d0756cb-c41b-460b-a7e6-4f5faff3e540"/>
+				<reportElement x="73" y="385" width="253" height="38" uuid="3d0756cb-c41b-460b-a7e6-4f5faff3e540"/>
 				<textElement markup="html">
 					<font fontName="Verdana"/>
 					<paragraph lineSpacing="Double"/>
@@ -69,7 +68,7 @@
 				<textFieldExpression><![CDATA[$P{regards}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="73" y="383" width="100" height="20" uuid="675096e1-315f-4c3f-a065-669922963ab6"/>
+				<reportElement x="78" y="331" width="100" height="20" uuid="675096e1-315f-4c3f-a065-669922963ab6"/>
 				<textElement markup="html">
 					<font fontName="Verdana"/>
 				</textElement>
@@ -79,55 +78,53 @@
 				<reportElement stretchType="RelativeToTallestObject" isPrintRepeatedValues="false" x="346" y="-478" width="99" height="87" uuid="e92da182-86db-4d20-a163-b83c23b74614"/>
 				<imageExpression><![CDATA[$P{cmp_logo_url}]]></imageExpression>
 			</image>
-			<image scaleImage="FillFrame">
-				<reportElement x="346" y="367" width="147" height="74" uuid="c08f97ef-3e03-43b4-bb84-67fbfc2f5423"/>
-				<imageExpression><![CDATA[$P{roundseal}]]></imageExpression>
-			</image>
-			<image scaleImage="FillFrame">
-				<reportElement x="42" y="402" width="183" height="40" uuid="72a07862-661c-425d-9f51-44382c1dac7f"/>
-				<imageExpression><![CDATA[$P{signature}]]></imageExpression>
-			</image>
-			<staticText>
-				<reportElement x="153" y="24" width="223" height="43" forecolor="#FF0000" uuid="ec62f8ab-b4c8-49d6-81a5-43b9d5859a1c">
-					<printWhenExpression><![CDATA[$P{header_label}==""]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="16" isBold="true"/>
+			<textField>
+				<reportElement x="178" y="21" width="168" height="28" uuid="d029f5f2-138b-442b-b5dc-6434ed368718"/>
+				<textElement>
+					<font fontName="Verdana" size="14" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Letterpad]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{header_label}]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement x="349" y="324" width="107" height="74" uuid="c08f97ef-3e03-43b4-bb84-67fbfc2f5423"/>
+			</image>
+			<image scaleImage="FillFrame">
+				<reportElement x="82" y="351" width="183" height="34" uuid="72a07862-661c-425d-9f51-44382c1dac7f"/>
+			</image>
 		</band>
 	</title>
 	<pageFooter>
 		<band height="68">
+			<staticText>
+				<reportElement x="105" y="19" width="131" height="20" uuid="f9d3a80c-cc8f-45c1-89e8-2fa702c3d599"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[$P{cmp_name}]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="246" y="8" width="151" height="51" uuid="60eddb42-4d56-453c-b1fa-6ca2034b6a9e"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+				</textElement>
+				<text><![CDATA[$P{cmp_address}]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="407" y="7" width="145" height="52" uuid="6fe479f1-78ec-461c-a465-45a4caa91a37"/>
+				<textElement>
+					<font fontName="Arial" size="8" isBold="false" isItalic="true"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+				</textElement>
+				<text><![CDATA[$P{cmp_website}]]></text>
+			</staticText>
 			<line>
 				<reportElement x="3" y="1" width="551" height="1" forecolor="#CC0000" uuid="7b4f7d7a-aa37-44a0-ac3c-d86195a064c2"/>
 			</line>
 			<image scaleImage="FillFrame">
 				<reportElement x="8" y="8" width="85" height="50" uuid="1235805b-1503-4259-b040-4c5f15004940"/>
-				<imageExpression><![CDATA[$P{cmp_logo_footer}]]></imageExpression>
+				<imageExpression><![CDATA[$P{cmp_logo_url}]]></imageExpression>
 			</image>
-			<textField>
-				<reportElement x="97" y="15" width="145" height="41" uuid="45b8c448-fff5-4e6d-9f75-b462f4094d4e"/>
-				<textElement markup="html">
-					<font size="9" isBold="true" isItalic="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cmp_name}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="242" y="15" width="181" height="43" uuid="555f0780-5218-46ed-89fe-080723359e7d"/>
-				<textElement markup="html">
-					<font size="9" isBold="true" isItalic="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cmp_address}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement x="429" y="16" width="119" height="41" uuid="144e4f21-0f64-4c4f-acca-c07984b63811"/>
-				<textElement markup="html">
-					<font size="9" isBold="true" isItalic="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$P{cmp_website}]]></textFieldExpression>
-			</textField>
 		</band>
 	</pageFooter>
 </jasperReport>

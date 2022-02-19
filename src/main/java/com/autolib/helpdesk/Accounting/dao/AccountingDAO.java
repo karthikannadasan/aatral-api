@@ -54,6 +54,6 @@ public interface AccountingDAO {
 
 	Map<String, Object> deleteLetterPad(LetterPad letterpad);
 
-	Map<String, Object> getAllLetterPad(LetterpadRequest req);
+	Map<String, Object> getAllLetterPad();
 
 }

@@ -160,8 +160,9 @@ public class GoogleMailAsTicket {
 	@Override
 	public String toString() {
 		return "GoogleMailAsTicket [id=" + id + ", ticketId=" + ticketId + ", idMail=" + idMail + ", subject=" + subject
-				+ ", institute=" + institute + ", product=" + product + ", emailId=" + emailId + ", emailUpdates="
-				+ emailUpdates + ", attachments=" + attachments + ", createddatetime=" + createddatetime + "]";
+				+ ", summary=" + summary + ", institute=" + institute + ", product=" + product + ", emailId=" + emailId
+				+ ", emailUpdates=" + emailUpdates + ", attachments=" + attachments + ", createddatetime="
+				+ createddatetime + "]";
 	}
 
 }

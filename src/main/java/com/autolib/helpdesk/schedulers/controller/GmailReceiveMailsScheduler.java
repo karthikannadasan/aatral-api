@@ -9,8 +9,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,7 @@ import com.autolib.helpdesk.Institutes.model.Institute;
 import com.autolib.helpdesk.Institutes.model.InstituteContact;
 import com.autolib.helpdesk.Institutes.repository.InstituteContactRepository;
 import com.autolib.helpdesk.common.GmailServiceThroughRefreshToken;
+import com.autolib.helpdesk.common.Util;
 import com.autolib.helpdesk.schedulers.model.GoogleMailAsTicket;
 import com.autolib.helpdesk.schedulers.repository.GoogleMailAsTicketRepository;
 import com.google.api.client.auth.oauth2.Credential;
@@ -39,6 +43,8 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Base64;
+import com.google.api.client.util.StringUtils;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
@@ -77,20 +83,16 @@ public class GmailReceiveMailsScheduler {
 	 * @throws IOException If the credentials.json file cannot be found.
 	 */
 
-//	@Scheduled(cron = "0 0 3 * * *")
-//	void deleteOldMails() {
-//		try {
-//
-//			Calendar calendar = Calendar.getInstance();
-//			calendar.add(Calendar.MONTH, -2);
-//
-//			gmRepo.deleteOldMails(calendar.getTime());
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
+//	@GetMapping("DeleteGmailReceiveMailsScheduler")
+	@Scheduled(cron = "35 12 * * * *")
+	void delete() throws IOException, GeneralSecurityException {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_MONTH, -30);
+		System.out.println("DeleteGmailReceiveMailsScheduler::" + Util.sdfFormatter(cal.getTime()));
+		gmRepo.deleteOldMails(cal.getTime());
+	}
 
-	@GetMapping("GmailReceiveMailsScheduler")
+//	@GetMapping("GmailReceiveMailsScheduler")
 	@Scheduled(cron = "0 0/30 * * * *")
 	void execute() throws IOException, GeneralSecurityException {
 
@@ -102,7 +104,7 @@ public class GmailReceiveMailsScheduler {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		System.out.println(sdf.format(new Date()));
 		Gmail.Users.Messages.List request = service.users().messages().list("me")
-				.setQ("in:inbox after:" + sdf.format(new Date()));
+				.setQ("in:inbox after:2021/11/30 before:2021/12/3");
 
 		ListMessagesResponse messageResponse = request.execute();
 		request.setPageToken(messageResponse.getNextPageToken());
@@ -112,6 +114,7 @@ public class GmailReceiveMailsScheduler {
 			return;
 
 		for (Message msg : messages) {
+
 			GoogleMailAsTicket mast = new GoogleMailAsTicket();
 			try {
 				System.out.println(msg.toPrettyString());
@@ -126,7 +129,8 @@ public class GmailReceiveMailsScheduler {
 				if (message.getPayload().getMimeType().equalsIgnoreCase("multipart/alternative")) {
 					for (MessagePart mp : message.getPayload().getParts()) {
 						if (mp.getMimeType().equalsIgnoreCase("text/html")) {
-							mast.setSummary(mp.getBody().getData());
+							mast.setSummary(StringUtils
+									.newStringUtf8(Base64.encodeBase64((Base64.decodeBase64(mp.getBody().getData())))));
 						}
 					}
 				} else if (message.getPayload().getMimeType().equalsIgnoreCase("multipart/mixed")) {
@@ -134,28 +138,14 @@ public class GmailReceiveMailsScheduler {
 					MessagePart mps = message.getPayload().getParts().get(0);
 					for (MessagePart mp : mps.getParts()) {
 						if (mp.getMimeType().equalsIgnoreCase("text/html")) {
-							mast.setSummary(mp.getBody().getData());
+							mast.setSummary(StringUtils
+									.newStringUtf8(Base64.encodeBase64((Base64.decodeBase64(mp.getBody().getData())))));
 						}
 					}
 
 					List<MessagePart> mp2 = message.getPayload().getParts();
 					for (int k = 1; mp2.size() > k; k++) {
 						MessagePart mp2s = mp2.get(k);
-//						String attachId = mp2s.getBody().getAttachmentId();
-//						Get mpb = service.users().messages().attachments().get("me", mast.getIdMail(), attachId);
-//						MessagePartBody mpd = mpb.execute();
-//						byte[] data = Base64.decodeBase64(mpd.getData());
-//						File directory = new File(contentPath + "_google_email_attachments/" + mast.getIdMail() + "/");
-//						System.out.println(directory.getAbsolutePath());
-//						if (!directory.exists()) {
-//							System.out.println("Directory created::" + directory.getAbsolutePath());
-//							directory.mkdir();
-//						}
-//						File convertFile = new File(directory.getAbsolutePath() + "/" + mp2s.getFilename());
-//						convertFile.createNewFile();
-//						FileOutputStream fout = new FileOutputStream(convertFile);
-//						fout.write(data);
-//						fout.close();
 						attachments = attachments + mp2s.getFilename() + ";";
 					}
 				}

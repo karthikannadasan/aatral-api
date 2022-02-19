@@ -2,25 +2,18 @@ package com.autolib.helpdesk.Accounting.model;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
-import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.autolib.helpdesk.Institutes.model.Institute;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Entity
-@Table(name="letterpad" ,indexes = { @Index(name = "institute_id_idx", columnList = "institute_id")})
+@Table(name="letterpad")
 public class LetterPad {
 	
 	@Id
@@ -29,11 +22,9 @@ public class LetterPad {
 	private int id;
 	
 	
-	/*
-	 * @Lob
-	 * 
-	 * @Column(name = "to_address") private String toAddress ="";
-	 */
+	@Lob
+	@Column(name = "to_address")
+	private String toAddress ="";
 	
 	
 	@Lob
@@ -62,87 +53,6 @@ public class LetterPad {
 	
 	@Column(name="file_type" ,length=128)
 	private String fileType;
-	
-	
-	@OneToOne(cascade = CascadeType.REFRESH)
-	@JoinColumn(name = "institute_id", referencedColumnName = "institute_id", nullable = false)
-	@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-	private Institute institute;
-	
-	
-	@Column(name = "billing_to")
-	private String billingTo = "";
-	@Column(name = "billing_street1")
-	private String billingStreet1 = "";
-	
-
-	public String getBillingTo() {
-		return billingTo;
-	}
-
-	public void setBillingTo(String billingTo) {
-		this.billingTo = billingTo;
-	}
-
-	public String getBillingStreet1() {
-		return billingStreet1;
-	}
-
-	public void setBillingStreet1(String billingStreet1) {
-		this.billingStreet1 = billingStreet1;
-	}
-
-	public String getBillingStreet2() {
-		return billingStreet2;
-	}
-
-	public void setBillingStreet2(String billingStreet2) {
-		this.billingStreet2 = billingStreet2;
-	}
-
-	public String getBillingCity() {
-		return billingCity;
-	}
-
-	public void setBillingCity(String billingCity) {
-		this.billingCity = billingCity;
-	}
-
-	public String getBillingState() {
-		return billingState;
-	}
-
-	public void setBillingState(String billingState) {
-		this.billingState = billingState;
-	}
-
-	public String getBillingCountry() {
-		return billingCountry;
-	}
-
-	public void setBillingCountry(String billingCountry) {
-		this.billingCountry = billingCountry;
-	}
-
-	public String getBillingZIPCode() {
-		return billingZIPCode;
-	}
-
-	public void setBillingZIPCode(String billingZIPCode) {
-		this.billingZIPCode = billingZIPCode;
-	}
-
-	@Column(name = "billing_street2")
-	private String billingStreet2 = "";
-	@Column(name = "billing_city")
-	private String billingCity = "";
-	@Column(name = "billing_state")
-	private String billingState = "";
-	@Column(name = "billing_country")
-	private String billingCountry = "";
-	@Column(name = "billing_zipcode")
-	private String billingZIPCode = "";
-	
 
 	public int getId() {
 		return id;
@@ -152,7 +62,13 @@ public class LetterPad {
 		this.id = id;
 	}
 
-	
+	public String getToAddress() {
+		return toAddress;
+	}
+
+	public void setToAddress(String toAddress) {
+		this.toAddress = toAddress;
+	}
 
 	public String getContent() {
 		return content;
@@ -210,26 +126,12 @@ public class LetterPad {
 		this.fileType = fileType;
 	}
 
-	public Institute getInstitute() {
-		return institute;
-	}
-
-	public void setInstitute(Institute institute) {
-		this.institute = institute;
-	}
-
 	@Override
 	public String toString() {
-		return "LetterPad [id=" + id + ", content=" + content + ", subject=" + subject + ", regardText=" + regardText
-				+ ", letterPadDate=" + letterPadDate + ", fileName=" + fileName + ", fileSize=" + fileSize
-				+ ", fileType=" + fileType + ", institute=" + institute + ", billingTo=" + billingTo
-				+ ", billingStreet1=" + billingStreet1 + ", billingStreet2=" + billingStreet2 + ", billingCity="
-				+ billingCity + ", billingState=" + billingState + ", billingCountry=" + billingCountry
-				+ ", billingZIPCode=" + billingZIPCode + "]";
+		return "LetterPad [id=" + id + ", toAddress=" + toAddress + ", content=" + content + ", subject=" + subject
+				+ ", regardText=" + regardText + ", letterPadDate=" + letterPadDate + ", fileName=" + fileName
+				+ ", fileSize=" + fileSize + ", fileType=" + fileType + "]";
 	}
-
-	
-	
 
 
 		

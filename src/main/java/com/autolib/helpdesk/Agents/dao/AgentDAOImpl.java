@@ -29,7 +29,6 @@ import com.autolib.helpdesk.Agents.entity.AgentReportRequest;
 import com.autolib.helpdesk.Agents.entity.InfoDetails;
 import com.autolib.helpdesk.Agents.entity.Product;
 import com.autolib.helpdesk.Agents.entity.ProductRequest;
-import com.autolib.helpdesk.Agents.entity.PushNotification;
 import com.autolib.helpdesk.Agents.entity.RawMaterialReportRequests;
 import com.autolib.helpdesk.Agents.entity.RawMaterialRequest;
 import com.autolib.helpdesk.Agents.entity.RawMaterialRequestProducts;

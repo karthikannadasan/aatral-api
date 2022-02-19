@@ -14,10 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.autolib.helpdesk.Agents.repository.AgentRepository;
 import com.autolib.helpdesk.Agents.repository.AgentTokenRepository;
 import com.autolib.helpdesk.HR.entity.LeaveApplied;
 import com.autolib.helpdesk.Reminder.model.Reminder;
@@ -37,6 +39,9 @@ public class PushNotification {
 
 	@Autowired
 	AgentTokenRepository tokenRepo;
+
+	@Autowired
+	AgentRepository agentRepo;
 
 	public int sentNotification(String tokenId, Map data, Map notification)
 			throws UnsupportedEncodingException, MalformedURLException {
@@ -98,8 +103,7 @@ public class PushNotification {
 							reply.getTicket().getEmailId(), reply.getTicket().getCreatedBy()));
 
 			System.out.println("sendTicketReplyPushNotify::" + emailIds.toString());
-			emailIds.remove(null);
-			emailIds.remove(reply.getReplyBy());
+			emailIds.removeAll(Arrays.asList(null, reply.getReplyBy()));
 			System.out.println(emailIds.toString());
 
 			List<AgentToken> token = tokenRepo.findByEmployeeEmailIdIn(emailIds);
@@ -147,8 +151,7 @@ public class PushNotification {
 						ticketReq.getTicket().getEmailId(), ticketReq.getTicket().getCreatedBy()));
 
 		System.out.println("sendTicketUpdatePushNotify::" + emailIds.toString());
-		emailIds.remove(null);
-		emailIds.remove(ticketReq.getTicket().getLastUpdatedBy());
+		emailIds.removeAll(Arrays.asList(null, ticketReq.getTicket().getLastUpdatedBy()));
 		System.out.println(emailIds.toString());
 
 		List<AgentToken> token = tokenRepo.findByEmployeeEmailIdIn(emailIds);
@@ -171,7 +174,8 @@ public class PushNotification {
 					notification.put("title", "Ticket #" + ticketReq.getTicket().getTicketId() + "- Updated - "
 							+ StringUtils.newStringUtf8(Base64.decodeBase64(ticketReq.getTicket().getSubject())));
 
-					notification.put("body", ticketReq.getTicket().getSubject());
+					notification.put("body",
+							StringUtils.newStringUtf8(Base64.decodeBase64(ticketReq.getTicket().getSubject())));
 
 					try {
 						sentNotification(tkn.getToken(), data, notification);
@@ -190,8 +194,7 @@ public class PushNotification {
 				ticket.getEmailId(), ticket.getCreatedBy()));
 
 		System.out.println("sendTicketAttachmentPushNotify::" + emailIds.toString());
-		emailIds.remove(null);
-		emailIds.remove(ticket.getLastUpdatedBy());
+		emailIds.removeAll(Arrays.asList(null, ticket.getLastUpdatedBy()));
 		System.out.println(emailIds.toString());
 
 		List<AgentToken> token = tokenRepo.findByEmployeeEmailIdIn(emailIds);
@@ -232,9 +235,8 @@ public class PushNotification {
 		List<String> emailIds = new ArrayList<String>(Arrays.asList(ticket.getAssignedBy(), ticket.getAssignedTo(),
 				ticket.getEmailId(), ticket.getCreatedBy()));
 
-		System.out.println("sendTicketAttachmentPushNotify::" + emailIds.toString());
-		emailIds.remove(null);
-		emailIds.remove(ticket.getLastUpdatedBy());
+		System.out.println("sendTicketAssignedPushNotify::" + emailIds.toString());
+		emailIds.removeAll(Arrays.asList(null, ticket.getLastUpdatedBy()));
 		System.out.println(emailIds.toString());
 
 		List<AgentToken> token = tokenRepo.findByEmployeeEmailIdIn(emailIds);
@@ -325,8 +327,8 @@ public class PushNotification {
 							"Task Updated- #" + request.getTask().getTaskId() + " - " + request.getTask().getSubject());
 
 					if (request.getTaskHistory() != null)
-						notification.put("body", request.getTaskHistory().getUpdatedBy() + " updated "
-								+ request.getTaskHistory().getField());
+						notification.put("body",
+								request.getTaskHistory().getField() + " : " + request.getTaskHistory().getHistoryTo());
 
 					try {
 						sentNotification(tkn.getToken(), data, notification);
@@ -451,7 +453,6 @@ public class PushNotification {
 					Ex.printStackTrace();
 				}
 			}
-
 		}
 	}
 
@@ -470,7 +471,7 @@ public class PushNotification {
 				data.put("action", "VIEW_REMINDER");
 				data.put("notification_type", "VIEW_REMINDER_NOTIFICATION");
 
-				notification.put("title", "Reminder #" + reminder.getSubject());
+				notification.put("title", "Reminder :" + reminder.getSubject());
 
 				notification.put("body", reminder.getDescription());
 
@@ -480,7 +481,89 @@ public class PushNotification {
 					Ex.printStackTrace();
 				}
 			}
-
 		}
+	}
+
+	public void sendAgentLedgerCreditNotify(AgentLedger ledger) {
+
+		AgentToken tkn = tokenRepo.findByEmployeeEmailId(ledger.getAgentEmailId());
+
+		if (tkn != null) {
+			if (!tkn.getToken().isEmpty()) {
+				Map<String, String> notification = new HashMap<>();
+
+				Map<String, Object> data = new HashMap<>();
+
+				data.put("ledger_id", ledger.getId());
+				data.put("action", "VIEW_AGENT_LEDGER");
+				data.put("notification_type", "VIEW_AGENT_LEDGER_NOTIFICATION");
+
+				notification.put("title", "Credit : Rs." + ledger.getCredit() + " - " + ledger.getAgentEmailId());
+
+				notification.put("body", ledger.getSubject());
+
+				try {
+					sentNotification(tkn.getToken(), data, notification);
+				} catch (Exception Ex) {
+					Ex.printStackTrace();
+				}
+			}
+		}
+	}
+
+	public void sendAgentLedgerDebitNotify(AgentLedger ledger) {
+
+		List<Agent> agents = agentRepo.findAllAccountsAdmins();
+
+		List<String> emailIds = agents.stream().map(Agent::getEmailId).collect(Collectors.toList());
+		emailIds.add(ledger.getAgentEmailId());
+
+		System.out.println(emailIds);
+
+		List<AgentToken> tokens = tokenRepo.findByEmployeeEmailIdIn(emailIds);
+
+		tokens.forEach(tkn -> {
+			if (!tkn.getToken().isEmpty()) {
+				Map<String, String> notification = new HashMap<>();
+
+				Map<String, Object> data = new HashMap<>();
+
+				data.put("ledger_id", ledger.getId());
+				data.put("action", "VIEW_AGENT_LEDGER");
+				data.put("notification_type", "VIEW_AGENT_LEDGER_NOTIFICATION");
+
+				notification.put("title", "Debit : Rs." + ledger.getDebit() + " - " + ledger.getAgentEmailId());
+
+				notification.put("body", ledger.getSubject());
+
+				try {
+					sentNotification(tkn.getToken(), data, notification);
+				} catch (Exception Ex) {
+					Ex.printStackTrace();
+				}
+			}
+		});
+
+//		if (tkn != null) {
+//			if (!tkn.getToken().isEmpty()) {
+//				Map<String, String> notification = new HashMap<>();
+//
+//				Map<String, Object> data = new HashMap<>();
+//
+//				data.put("ledger_id", ledger.getId());
+//				data.put("action", "VIEW_AGENT_LEDGER");
+//				data.put("notification_type", "VIEW_AGENT_LEDGER_NOTIFICATION");
+//
+//				notification.put("title", "Credit : " + ledger.getCredit());
+//
+//				notification.put("body", "Reminder :" + ledger.getSubject());
+//
+//				try {
+//					sentNotification(tkn.getToken(), data, notification);
+//				} catch (Exception Ex) {
+//					Ex.printStackTrace();
+//				}
+//			}
+//		}
 	}
 }

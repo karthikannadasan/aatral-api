@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.autolib.helpdesk.Sales.model.Invoice.DealInvoice;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceReminderRequest;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceRequest;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceSearchRequest;
@@ -54,6 +55,23 @@ public class InvoiceController {
 			e.printStackTrace();
 		}
 		logger.info("saveDealInvoice ends:::");
+		return new ResponseEntity<>(resp, HttpStatus.OK);
+	}
+
+	@PostMapping("delete-deal-invoice")
+	public ResponseEntity<?> deleteDealInvoice(@RequestHeader(value = "Authorization") String token,
+			@RequestBody DealInvoice dealInv) {
+
+		logger.info("deleteDealInvoice starts:::" + dealInv);
+		jwtUtil.isValidToken(token);
+		Map<String, Object> resp = new HashMap<>();
+
+		try {
+			resp = invService.deleteDealInvoice(dealInv);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		logger.info("deleteDealInvoice ends:::");
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 

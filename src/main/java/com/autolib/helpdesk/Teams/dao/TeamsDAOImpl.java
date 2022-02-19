@@ -53,6 +53,9 @@ public class TeamsDAOImpl implements TeamsDAO {
 
 	@Autowired
 	EmailSender emailSender;
+	
+	@Autowired
+	PushNotification pushNotify;
 
 	@Value("${al.agent.web.url}")
 	private String agentWebURL;
@@ -117,7 +120,7 @@ public class TeamsDAOImpl implements TeamsDAO {
 
 					prepareDefaultPushNotifySettings(teamReq);
 
-				//	PushNotification.sendTeamsWelcomeNotification(teamReq.getTeams(), tempMember);
+					pushNotify.sendTeamsWelcomeNotification(teamReq.getTeams(), tempMember);
 
 					resp.putAll(Util.SuccessResponse());
 				}
@@ -247,7 +250,7 @@ public class TeamsDAOImpl implements TeamsDAO {
 
 					sendTeamMemberWelcomeMail(teamReq);
 
-				//	PushNotification.sendTeamsWelcomeNotification(teamReq.getTeams(), teamReq.getTeamMember());
+					pushNotify.sendTeamsWelcomeNotification(teamReq.getTeams(), teamReq.getTeamMember());
 
 					resp.putAll(Util.SuccessResponse());
 				}

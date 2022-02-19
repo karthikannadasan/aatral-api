@@ -133,13 +133,20 @@
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>6.11.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.lowagie</groupId>
-					<artifactId>itext</artifactId>
-				</exclusion>		
-			</exclusions>
+				<exclusions>
+					<exclusion>
+						<groupId>com.lowagie</groupId>
+						<artifactId>itext</artifactId>
+					</exclusion>		
+				</exclusions>
 		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.66</version>
+		</dependency>
+<!-- Thanks for using https://jar-download.com -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

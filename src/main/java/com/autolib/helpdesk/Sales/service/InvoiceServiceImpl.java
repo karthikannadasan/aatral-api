@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.autolib.helpdesk.Sales.dao.InvoiceDAO;
 import com.autolib.helpdesk.Sales.model.DealPayments;
 import com.autolib.helpdesk.Sales.model.DealRequest;
+import com.autolib.helpdesk.Sales.model.Invoice.DealInvoice;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceReminderRequest;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceRequest;
 import com.autolib.helpdesk.Sales.model.Invoice.DealInvoiceSearchRequest;
@@ -25,6 +26,11 @@ public class InvoiceServiceImpl implements InvoiceService {
 	@Override
 	public Map<String, Object> saveDealInvoice(DealInvoiceRequest dealInvReq) {
 		return invDAO.saveDealInvoice(dealInvReq);
+	}
+	
+	@Override
+	public Map<String, Object> deleteDealInvoice(DealInvoice dealInv) {
+		return invDAO.deleteDealInvoice(dealInv);
 	}
 
 	@Override

@@ -418,6 +418,7 @@ public class TicketDAOImpl implements TicketDAO {
 					ticket = ticketRepo.save(ticketRequest.getTicket());
 					resp.putAll(Util.SuccessResponse());
 					sendTicketStatusUpdateMail(ticketRequest);
+					pushNotify.sendTicketUpdatePushNotify(ticketRequest);
 				}
 
 			}
@@ -449,7 +450,7 @@ public class TicketDAOImpl implements TicketDAO {
 				} else if (agent.isBlocked()) {
 					resp.putAll(Util.invalidMessage("Agent Account Blocked, You can't make changes"));
 				} else {
-					ticketRequest.getTicket().setLastUpdatedBy(agent.getEmailId());
+//					ticketRequest.getTicket().setLastUpdatedBy(agent.getEmailId());
 					ticketRequest.getTicket().setAssignedTo(agent.getEmailId());
 					ticketRequest.getTicket().setStatus(TicketStatus.Assigned);
 
@@ -1064,14 +1065,14 @@ public class TicketDAOImpl implements TicketDAO {
 			inst = instRepo.findByInstituteId(instituteId);
 			callReport = callRepo.findByInstituteId(instituteId);
 
+			resp.put("institute", inst);
 			if (callReport != null) {
-				resp.put("institute", inst);
 				resp.put("callReport", callReport);
-				resp.putAll(Util.SuccessResponse());
-			} else
-				resp.putAll(Util.FailedResponse());
+			}
 
+			resp.putAll(Util.SuccessResponse());
 		} catch (Exception ex) {
+			resp.putAll(Util.FailedResponse());
 			ex.printStackTrace();
 		}
 		return resp;

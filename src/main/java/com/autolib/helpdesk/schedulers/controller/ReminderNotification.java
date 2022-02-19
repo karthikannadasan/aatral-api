@@ -39,13 +39,13 @@ public class ReminderNotification {
 	@Scheduled(cron = "1 * * * * *")
 	void execute() {
 
-		logger.info("SendReminderNotification starts:::");
+		logger.info("SendReminderNotification starts:::" + Util.sdfFormatter(new Date(), "yyyy-MM-dd HH:mm"));
 
 		List<Reminder> reminders = reminderRepo
-				.findByReminderDateTime(Util.sdfFormatter(new Date(), "yyyy-mm-dd HH:mm"));
+				.findByReminderDateTime(Util.sdfFormatter(new Date(), "yyyy-MM-dd HH:mm"));
 
 		System.out.println(reminders);
-		
+
 		reminders.forEach(reminder -> notify.sendProductsRawMaterialRequestNotify(reminder));
 
 	}
